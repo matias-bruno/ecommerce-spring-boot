@@ -10,16 +10,13 @@ package com.techlab.spring1.model;
  */
 public class Product {
     // Atributos privados
-    private Integer id;
+    private int id;
     private String nombre;
     private Double  precio;
     private Integer stock;
     
-    private static int nextId = 1;
-    
     // Constructor
     public Product(String nombre, double precio, int stock) {
-        this.id = Product.nextId++;
         this.nombre = nombre;
         this.precio = precio >= 0 ? precio : 0;
         this.stock = stock >= 0 ? stock : 0;
@@ -29,6 +26,11 @@ public class Product {
     public int getId() {
         return this.id;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public String getNombre() {
         return this.nombre;
     }

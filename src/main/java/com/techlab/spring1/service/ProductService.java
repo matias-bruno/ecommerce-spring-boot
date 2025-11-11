@@ -5,8 +5,9 @@
 package com.techlab.spring1.service;
 
 import com.techlab.spring1.model.Product;
-import java.util.ArrayList;
+import com.techlab.spring1.repository.ProductRepository;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,39 +17,34 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProductService {
-    // El arreglo con los productos
-    private final ArrayList<Product> productos;
+    private ProductRepository productRepository;
     
-    // Constructor
-    public ProductService() {
-        this.productos = new ArrayList<>();
-        this.agregarProductos();
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
     
     public List<Product> getProducts() {
-        return this.productos;
+        return this.productRepository.getProducts();
     }
     
-    // Metodo para tener productos ingresados
-    public void agregarProductos() {
-        productos.add(new Product("Cafe Morenita", 5000, 5));
-        productos.add(new Product("Te Virginia", 1000, 10));
-        productos.add(new Product("Leche Serenisima", 1500, 10));
-        productos.add(new Product("Lavandina Ayudin", 1000, 10));
-        productos.add(new Product("Desodorante Axe", 2000, 10));
-    }
-    public boolean saveProduct(Product newProduct) {
+    public Product saveProduct(Product newProduct) {
         newProduct.setNombre(formatearNombre(newProduct.getNombre()));
         if(productoValido(newProduct.getNombre(), newProduct.getPrecio(), newProduct.getStock())) {
-            productos.add(newProduct);
+            Product product = productRepository.saveProduct(newProduct);
             System.out.println("Producto ingresado");
-            return true;
+            return product;
         } else {
             System.out.println("No se pudo ingresar el producto porque contenia datos no validos");
         }
-        return false;
+        return null;
     }
-    public boolean updateProduct(Product producto, Product newProduct) {
+    // Este método hay que cambiar tal vez
+    public boolean updateProduct(int id, Product newProduct) {
+        Product producto = productRepository.getProductById(id);
+        if(producto == null) {
+            System.out.println("No se encontro el id");
+            return false;
+        }
         String nombreProducto = newProduct.getNombre();
         double precioProducto = newProduct.getPrecio();
         int cantidadEnStock = newProduct.getStock();
@@ -64,23 +60,20 @@ public class ProductService {
         return false;
     }
     public Product getProductById(int id) {
-        for(Product producto : productos) {
-            if(producto.getId() == id)
-                return producto;
-        }
-        return null;
+        return productRepository.getProductById(id);
     }
-    public Product buscarProductoPorNombre(String nombre) {
+    public Product getProductByName(String nombre) {
         nombre = this.formatearNombre(nombre);
-        for(Product producto : productos) {
-            if(producto.getNombre().equalsIgnoreCase(nombre))
-                return producto;
-        }
-        return null;
+        return productRepository.getProductByName(nombre);
     }
-    public void deleteProduct(Product producto) {
-        productos.remove(producto);
-        System.out.println("Producto eliminado");
+    public void deleteProduct(int id) {
+        Product producto = productRepository.getProductById(id);
+        if(producto != null) {
+            productRepository.deleteProduct(producto);
+            System.out.println("Producto eliminado");
+        }
+        else
+            System.out.println("No se encontro el id");
     }
     // Metodo auxiliar para nombres de productos
     public String formatearNombre(String nombre) {

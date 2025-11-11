@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
     private ProductService productService;
     
-    @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
@@ -31,8 +30,8 @@ public class ProductController {
     }
     
     @PostMapping
-    public void createProduct(@RequestBody Product product) {
-        productService.saveProduct(product);
+    public Product createProduct(@RequestBody Product product) {
+        return productService.saveProduct(product);
     }
     
     @GetMapping("/{id}")
@@ -42,19 +41,11 @@ public class ProductController {
     
     @PutMapping("/{id}")
     public void updateProduct(@PathVariable int id, @RequestBody Product newProduct) {
-        Product product = productService.getProductById(id);
-        if(product != null)
-            productService.updateProduct(product,newProduct);
-        else
-            System.out.println("No se encontro el id");
+        productService.updateProduct(id, newProduct);
     }
     
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable int id) {
-        Product product = productService.getProductById(id);
-        if(product != null)
-            productService.deleteProduct(product);
-        else
-            System.out.println("No se encontro el id");
+        productService.deleteProduct(id);
     }
 }
