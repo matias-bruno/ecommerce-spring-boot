@@ -7,7 +7,6 @@ package com.techlab.spring1.service;
 import com.techlab.spring1.model.Product;
 import com.techlab.spring1.repository.ProductRepository;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,14 +22,14 @@ public class ProductService {
         this.productRepository = productRepository;
     }
     
-    public List<Product> getProducts() {
-        return this.productRepository.getProducts();
+    public List<Product> findAllProducts() {
+        return this.productRepository.findAll();
     }
     
     public Product saveProduct(Product newProduct) {
         newProduct.setNombre(formatearNombre(newProduct.getNombre()));
         if(productoValido(newProduct.getNombre(), newProduct.getPrecio(), newProduct.getStock())) {
-            Product product = productRepository.saveProduct(newProduct);
+            Product product = productRepository.save(newProduct);
             System.out.println("Producto ingresado");
             return product;
         } else {
@@ -38,13 +37,10 @@ public class ProductService {
         }
         return null;
     }
-    // Este método hay que cambiar tal vez
-    public boolean updateProduct(int id, Product newProduct) {
-        Product producto = productRepository.getProductById(id);
-        if(producto == null) {
-            System.out.println("No se encontro el id");
-            return false;
-        }
+
+    public Product updateProduct(Long id, Product newProduct) {
+        Product producto = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
         String nombreProducto = newProduct.getNombre();
         double precioProducto = newProduct.getPrecio();
         int cantidadEnStock = newProduct.getStock();
@@ -52,28 +48,23 @@ public class ProductService {
             producto.setNombre(nombreProducto);
             producto.setPrecio(precioProducto);
             producto.setStock(cantidadEnStock);
+            productRepository.save(producto);
             System.out.println("Producto actualizado");
-            return true;
+            return producto;
         } else {
             System.out.println("No se pudo actualizar el producto porque contenia datos no validos");
         }
-        return false;
+        return null;
     }
-    public Product getProductById(int id) {
-        return productRepository.getProductById(id);
+    public Product findProductById(Long id) {
+        Product producto = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        return producto;
     }
-    public Product getProductByName(String nombre) {
-        nombre = this.formatearNombre(nombre);
-        return productRepository.getProductByName(nombre);
-    }
-    public void deleteProduct(int id) {
-        Product producto = productRepository.getProductById(id);
-        if(producto != null) {
-            productRepository.deleteProduct(producto);
-            System.out.println("Producto eliminado");
-        }
-        else
-            System.out.println("No se encontro el id");
+    public void deleteProduct(Long id) {
+        Product producto = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        productRepository.delete(producto);
     }
     // Metodo auxiliar para nombres de productos
     public String formatearNombre(String nombre) {

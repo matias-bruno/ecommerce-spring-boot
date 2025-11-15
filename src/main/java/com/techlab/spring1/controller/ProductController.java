@@ -7,7 +7,6 @@ package com.techlab.spring1.controller;
 import com.techlab.spring1.model.Product;
 import com.techlab.spring1.service.ProductService;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -26,7 +25,7 @@ public class ProductController {
     
     @GetMapping
     public List<Product> listProducts() {
-        return productService.getProducts();
+        return productService.findAllProducts();
     }
     
     @PostMapping
@@ -35,17 +34,17 @@ public class ProductController {
     }
     
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable int id) {
-        return productService.getProductById(id);
+    public Product getProductById(@PathVariable Long id) {
+        return productService.findProductById(id);
     }
     
     @PutMapping("/{id}")
-    public void updateProduct(@PathVariable int id, @RequestBody Product newProduct) {
-        productService.updateProduct(id, newProduct);
+    public Product updateProduct(@PathVariable Long id, @RequestBody Product newProduct) {
+        return productService.updateProduct(id, newProduct);
     }
     
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable int id) {
+    public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
     }
 }

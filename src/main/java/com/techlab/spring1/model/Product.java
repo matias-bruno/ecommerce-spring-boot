@@ -4,18 +4,26 @@
  */
 package com.techlab.spring1.model;
 
+import jakarta.persistence.*;
+
 /**
  *
  * @author matias-bruno
  */
+@Entity
+@Table(name="productos")
 public class Product {
     // Atributos privados
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String nombre;
     private Double  precio;
     private Integer stock;
     
-    // Constructor
+    // Constructores
+    public Product() { };
+    
     public Product(String nombre, double precio, int stock) {
         this.nombre = nombre;
         this.precio = precio >= 0 ? precio : 0;
@@ -23,44 +31,39 @@ public class Product {
     }
     
     // Getters y setters
-    public int getId() {
-        return this.id;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
-    
+
     public String getNombre() {
-        return this.nombre;
+        return nombre;
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
-    public double getPrecio() {
-        return this.precio;
+    public Double getPrecio() {
+        return precio;
     }
 
-    public void setPrecio(double precio) {
-        this.precio = precio >= 0 ? precio : 0;
+    public void setPrecio(Double precio) {
+        this.precio = precio;
     }
 
-    public int getStock() {
-        return this.stock;
+    public Integer getStock() {
+        return stock;
     }
 
-    public void setStock(int stock) {
-        this.stock = stock >= 0 ? stock : 0;
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
-    public void agregarStock(int cantidad) {
-        this.stock += cantidad;
-    }
-    public void descontarStock(int cantidad) {
-        if(cantidad <= this.stock)
-            this.stock -= cantidad;
-    }
+    
     
     @Override
     public String toString() {
