@@ -13,36 +13,38 @@ import org.springframework.web.bind.annotation.*;
  *
  * @author matias-bruno
  */
-
 @RestController
 @RequestMapping("/api/productos")
 public class ProductController {
-    private ProductService productService;
-    
+
+    private final ProductService productService;
+
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
-    
+
+    // GET /products?nombre="product"&precio=123
     @GetMapping
-    public List<Product> listProducts() {
-        return productService.findAllProducts();
+    public List<Product> listProducts(@RequestParam(required = false, defaultValue = "") String nombre,
+            @RequestParam(required = false, defaultValue = "0") Double precio) {
+        return productService.findAllProducts(nombre, precio);
     }
-    
+
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
         return productService.saveProduct(product);
     }
-    
+
     @GetMapping("/{id}")
     public Product getProductById(@PathVariable Long id) {
         return productService.findProductById(id);
     }
-    
+
     @PutMapping("/{id}")
     public Product updateProduct(@PathVariable Long id, @RequestBody Product newProduct) {
         return productService.updateProduct(id, newProduct);
     }
-    
+
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
