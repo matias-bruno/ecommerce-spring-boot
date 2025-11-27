@@ -30,12 +30,12 @@ public class ProductService {
         if (precio > 0) {
             return this.productRepository.findByPrecioLessThanEqual(precio);
         }
-        // Lo de siempre, sin filtros
+
         return this.productRepository.findAll();
     }
 
     public Product saveProduct(Product newProduct) {
-        String nombreConFormato = formatearNombre(newProduct.getNombre());
+        String nombreConFormato = ProductService.formatearNombre(newProduct.getNombre());
         newProduct.setNombre(nombreConFormato);
         if(productRepository.existsByNombre(nombreConFormato)) {
             System.out.println("Ya existe un producto con ese nombre");
@@ -72,7 +72,7 @@ public class ProductService {
     }
 
     // Metodo auxiliar para nombres de productos
-    public String formatearNombre(String nombre) {
+    private static String formatearNombre(String nombre) {
         String[] palabras = nombre.split(" ");
         StringBuilder sb = new StringBuilder();
         for (String palabra : palabras) {
