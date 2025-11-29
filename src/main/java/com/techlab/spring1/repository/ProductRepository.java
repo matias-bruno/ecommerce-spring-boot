@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface ProductRepository extends JpaRepository<Product,Long> {
     boolean existsByNombre(String nombre);
-    List<Product> findByNombreContaining(String nombre);
+    List<Product> findByNombreContainingIgnoreCase(String nombre);
     List<Product> findByPrecioLessThanEqual(Double precio);
-    List<Product> findByNombreContainingAndPrecioLessThanEqual(String nombre, Double precio);
+    List<Product> findByNombreContainingIgnoreCaseAndPrecioLessThanEqual(String nombre, Double precio);
     
 }
