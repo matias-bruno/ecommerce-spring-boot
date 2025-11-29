@@ -80,7 +80,7 @@ public class ProductService {
 
     // Metodo auxiliar para nombres de productos
     private static String formatearNombre(String nombre) {
-        String[] palabras = nombre.split(" ");
+        String[] palabras = nombre.trim().split("\\s+");
         StringBuilder sb = new StringBuilder();
         for (String palabra : palabras) {
             sb.append(palabra.substring(0, 1).toUpperCase());
