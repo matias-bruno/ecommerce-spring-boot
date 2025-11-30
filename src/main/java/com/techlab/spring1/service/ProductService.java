@@ -51,8 +51,11 @@ public class ProductService {
         
         String nombreConFormato = ProductService.formatearNombre(newProduct.getNombre());
         newProduct.setNombre(nombreConFormato);
-        if(productRepository.existsByNombre(nombreConFormato)) {
-            throw new DuplicateResourceException("Producto con nombre '" + nombreConFormato + "' ya existe" );
+        
+        if (!newProduct.getNombre().equalsIgnoreCase(producto.getNombre())) {
+            if(productRepository.existsByNombre(nombreConFormato)) {
+                throw new DuplicateResourceException("Producto con nombre '" + nombreConFormato + "' ya existe" );
+            }
         }
         
         producto.setNombre(newProduct.getNombre());
@@ -62,7 +65,6 @@ public class ProductService {
         producto.setImagenUrl(newProduct.getImagenUrl());
 
         productRepository.save(producto);
-        System.out.println("Producto actualizado");
         return producto;
     }
 
