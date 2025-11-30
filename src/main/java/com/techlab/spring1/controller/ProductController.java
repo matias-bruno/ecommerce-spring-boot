@@ -2,6 +2,7 @@ package com.techlab.spring1.controller;
 
 import com.techlab.spring1.model.Product;
 import com.techlab.spring1.service.ProductService;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
+    public Product createProduct(@Valid @RequestBody Product product) {
         return productService.saveProduct(product);
     }
 
@@ -38,7 +39,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product newProduct) {
+    public Product updateProduct(@PathVariable Long id, @Valid @RequestBody Product newProduct) {
         return productService.updateProduct(id, newProduct);
     }
 
