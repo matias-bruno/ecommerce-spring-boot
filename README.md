@@ -70,7 +70,7 @@ Ejemplo de body:
 ## ⚠️ Manejo de excepciones
 El proyecto utiliza dos excepciones personalizadas:
 - **ResourceNotFoundException** → cuando el producto no existe.
-- **ResourceAlreadyExistsException** → cuando se intenta crear un producto duplicado.
+- **DuplicateResourceException** → cuando se intenta crear un producto duplicado.
 
 Utiliza un excepción de Spring Boot
 - **MethodArgumentNotValidException** → cuando los datos enviados no son válidos.
