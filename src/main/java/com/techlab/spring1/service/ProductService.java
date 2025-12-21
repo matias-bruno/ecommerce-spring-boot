@@ -20,26 +20,26 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<Product> findAllProducts(String nombre, Double precio) {
-        if (!nombre.isEmpty() && precio > 0) {
-            return this.productRepository.findByNombreContainingIgnoreCaseAndPrecioLessThanEqual(nombre, precio);
+    public List<Product> findAllProducts(String name, Double price) {
+        if (!name.isEmpty() && price > 0) {
+            return this.productRepository.findByNameContainingIgnoreCaseAndPriceLessThanEqual(name, price);
         }
 
-        if (!nombre.isEmpty()) {
-            return this.productRepository.findByNombreContainingIgnoreCase(nombre);
+        if (!name.isEmpty()) {
+            return this.productRepository.findByNameContainingIgnoreCase(name);
         }
 
-        if (precio > 0) {
-            return this.productRepository.findByPrecioLessThanEqual(precio);
+        if (price > 0) {
+            return this.productRepository.findByPriceLessThanEqual(price);
         }
 
         return this.productRepository.findAll();
     }
 
     public Product saveProduct(Product newProduct) {
-        String nombreConFormato = ProductService.formatearNombre(newProduct.getNombre());
-        newProduct.setNombre(nombreConFormato);
-        if(productRepository.existsByNombre(nombreConFormato)) {
+        String nombreConFormato = ProductService.formatearNombre(newProduct.getName());
+        newProduct.setName(nombreConFormato);
+        if(productRepository.existsByName(nombreConFormato)) {
             throw new DuplicateResourceException("Producto con nombre '" + nombreConFormato + "' ya existe" );
         }
         return productRepository.save(newProduct);
@@ -49,20 +49,20 @@ public class ProductService {
         Product producto = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el producto con id " + id));
         
-        String nombreConFormato = ProductService.formatearNombre(newProduct.getNombre());
-        newProduct.setNombre(nombreConFormato);
+        String nombreConFormato = ProductService.formatearNombre(newProduct.getName());
+        newProduct.setName(nombreConFormato);
         
-        if (!newProduct.getNombre().equalsIgnoreCase(producto.getNombre())) {
-            if(productRepository.existsByNombre(nombreConFormato)) {
+        if (!newProduct.getName().equalsIgnoreCase(producto.getName())) {
+            if(productRepository.existsByName(nombreConFormato)) {
                 throw new DuplicateResourceException("Producto con nombre '" + nombreConFormato + "' ya existe" );
             }
         }
         
-        producto.setNombre(newProduct.getNombre());
-        producto.setPrecio(newProduct.getPrecio());
+        producto.setName(newProduct.getName());
+        producto.setPrice(newProduct.getPrice());
         producto.setStock(newProduct.getStock());
-        producto.setDescripcion(newProduct.getDescripcion());
-        producto.setImagenUrl(newProduct.getImagenUrl());
+        producto.setDescription(newProduct.getDescription());
+        producto.setImageUrl(newProduct.getImageUrl());
 
         productRepository.save(producto);
         return producto;
