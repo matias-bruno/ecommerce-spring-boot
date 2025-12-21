@@ -8,7 +8,7 @@ El proyecto incluye:
 - Validaciones básicas.
 - Datos precargados.
 - Pruebas de la API usando **Postman**.
-- Demostración en video: <a href="https://youtu.be/XlD3Sg38lHA" target="_blank">https://youtu.be/XlD3Sg38lHA</a>
+- Demostración en [video](https://youtu.be/XlD3Sg38lHA)
 
 ---
 
@@ -28,11 +28,11 @@ La API gestiona productos con los siguientes campos:
 ```json
 {
   "id": 1,
-  "nombre": "Laptop",
-  "descripcion": "Equipo portátil",
-  "precio": 1500.0,
+  "name": "Laptop",
+  "description": "Equipo portátil",
+  "price": 1500.0,
   "stock": 10,
-  "imagenUrl": "http://imagenes/laptop.jpg"
+  "imageUrl": "http://imagenes.com/laptop.jpg"
 }
 ```
 
@@ -51,11 +51,11 @@ La API gestiona productos con los siguientes campos:
 Ejemplo de body:
 ```json
 {
-  "nombre": "Mouse Gamer",
-  "descripcion": "Mouse RGB",
-  "precio": 25.99,
+  "name": "Mouse Gamer",
+  "description": "Mouse RGB",
+  "price": 25.99,
   "stock": 50,
-  "imagenUrl": "http://imagenes/mouse.jpg"
+  "imageUrl": "http://imagenes/mouse.jpg"
 }
 ```
 
