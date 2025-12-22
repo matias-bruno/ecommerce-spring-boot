@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
  * @author matias-bruno
  */
 @RestController
-@RequestMapping("/api/productos")
+@RequestMapping("/api/products")
 @CrossOrigin(origins = "http://localhost:3000")
 public class ProductController {
 
@@ -23,11 +23,11 @@ public class ProductController {
         this.productService = productService;
     }
 
-    // GET /products?nombre="product"&precio=123
+    // GET /products?name="product"&price=123
     @GetMapping
-    public List<Product> listProducts(@RequestParam(required = false, defaultValue = "") String nombre,
-            @RequestParam(required = false, defaultValue = "0") Double precio) {
-        return productService.findAllProducts(nombre, precio);
+    public List<Product> listProducts(@RequestParam(required = false, defaultValue = "") String name,
+            @RequestParam(required = false, defaultValue = "0") Double price) {
+        return productService.findAllProducts(name, price);
     }
 
     @PostMapping

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping("/api/pedidos")
+@RequestMapping("/api/orders")
 @CrossOrigin(origins = "http://localhost:3000")
 public class OrderController {
 
