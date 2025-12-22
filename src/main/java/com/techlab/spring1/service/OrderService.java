@@ -9,6 +9,7 @@ import com.techlab.spring1.dto.OrderItemRequest;
 import com.techlab.spring1.dto.OrderRequest;
 import com.techlab.spring1.exception.InsufficientStockException;
 import com.techlab.spring1.repository.OrderRepository;
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
+    @Transactional
     public Order createOrder(OrderRequest orderRequest) {
         
         List<OrderItem> orderItems = new ArrayList<>();
