@@ -29,8 +29,9 @@ public class OrderItem {
     private String productName; 
     private Double priceAtPurchase; 
     
+    // TODO: poder descomentar esto y que funcione
     // Referencia opcional al producto original (para referencia)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product; 
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "product_id")
+    //private Product product; 
 }

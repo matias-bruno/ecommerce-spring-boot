@@ -7,6 +7,7 @@ import com.techlab.spring1.model.Product;
 import com.techlab.spring1.repository.ProductRepository;
 import com.techlab.spring1.dto.OrderItemRequest;
 import com.techlab.spring1.dto.OrderRequest;
+import com.techlab.spring1.exception.InsufficientStockException;
 import com.techlab.spring1.repository.OrderRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class OrderService {
         Double total = 0.0;
         Order order = new Order();
         
-        // 1. Iterar sobre los ítems recibidos del frontend
+        // Iterar sobre los ítems recibidos del frontend
         for(OrderItemRequest orderItemRequest : orderRequest.getItems()) {
             OrderItem orderItem = new OrderItem();
             // Obtener el producto
@@ -48,9 +49,21 @@ public class OrderService {
             }
             Product product = productOpt.get();
             
+            // Validación de stock
+            int requestedQuantity = orderItemRequest.getQuantity();
+            int availableQuantity = product.getStock();
+            if(availableQuantity < requestedQuantity) {
+                throw new InsufficientStockException(String.format(
+                        "Stock insuficiente para producto '%s'. Requerido: %d, Disponible: %d", 
+                        product.getName(), requestedQuantity, availableQuantity));
+            }
+            
+            // Reducción del stock
+            product.setStock(availableQuantity - requestedQuantity);
+            
             // Se guarda información en el orderItem
             orderItem.setQuantity(orderItemRequest.getQuantity());
-            orderItem.setProduct(product);
+            //orderItem.setProduct(product);
             orderItem.setOrder(order);
             orderItem.setPriceAtPurchase(product.getPrice());
             orderItem.setProductName(product.getName());
