@@ -55,7 +55,7 @@ Ejemplo de body:
   "description": "Mouse RGB",
   "price": 25.99,
   "stock": 50,
-  "imageUrl": "http://imagenes/mouse.jpg"
+  "imageUrl": "http://imagenes.com/mouse.jpg"
 }
 ```
 
