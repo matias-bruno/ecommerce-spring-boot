@@ -63,7 +63,7 @@ public class OrderService {
             
             // Se guarda información en el orderItem
             orderItem.setQuantity(orderItemRequest.getQuantity());
-            //orderItem.setProduct(product);
+            orderItem.setProduct(product);
             orderItem.setOrder(order);
             orderItem.setPriceAtPurchase(product.getPrice());
             orderItem.setProductName(product.getName());
