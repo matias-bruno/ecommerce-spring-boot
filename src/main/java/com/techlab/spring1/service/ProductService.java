@@ -1,10 +1,14 @@
 package com.techlab.spring1.service;
 
+import com.techlab.spring1.dto.ProductRequest;
+import com.techlab.spring1.dto.ProductResponse;
 import com.techlab.spring1.exception.DuplicateResourceException;
 import com.techlab.spring1.exception.ResourceNotFoundException;
+import com.techlab.spring1.mapper.ProductMapper;
 import com.techlab.spring1.model.Product;
 import com.techlab.spring1.repository.ProductRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,58 +24,57 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<Product> findAllProducts(String name, Double price) {
-        if (!name.isEmpty() && price > 0) {
-            return this.productRepository.findByNameContainingIgnoreCaseAndPriceLessThanEqual(name, price);
-        }
-
-        if (!name.isEmpty()) {
-            return this.productRepository.findByNameContainingIgnoreCase(name);
-        }
-
-        if (price > 0) {
-            return this.productRepository.findByPriceLessThanEqual(price);
-        }
-
-        return this.productRepository.findAll();
+    public List<ProductResponse> findAllProducts() {
+        return this.productRepository.findAll()
+                .stream()
+                .map(ProductMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public Product saveProduct(Product newProduct) {
-        String nombreConFormato = ProductService.formatearNombre(newProduct.getName());
-        newProduct.setName(nombreConFormato);
+    public ProductResponse saveProduct(ProductRequest newProductRequest) {
+        String nombreConFormato = ProductService.formatearNombre(newProductRequest.getName());
+        newProductRequest.setName(nombreConFormato);
         if(productRepository.existsByName(nombreConFormato)) {
             throw new DuplicateResourceException("Producto con nombre '" + nombreConFormato + "' ya existe" );
         }
-        return productRepository.save(newProduct);
+        Product newProduct = ProductMapper.toEntity(newProductRequest);
+        productRepository.save(newProduct);
+        return ProductMapper.toDto(newProduct);
     }
 
-    public Product updateProduct(Long id, Product newProduct) {
-        Product producto = productRepository.findById(id)
+    public ProductResponse updateProduct(Long id, ProductRequest newProductRequest) {
+        Product productToUpdate = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el producto con id " + id));
         
-        String nombreConFormato = ProductService.formatearNombre(newProduct.getName());
-        newProduct.setName(nombreConFormato);
+        // Queremos convertir la cadena de nombre a un formato pre-establecido
+        String nombreConFormato = ProductService.formatearNombre(newProductRequest.getName());
+        newProductRequest.setName(nombreConFormato);
         
-        if (!newProduct.getName().equalsIgnoreCase(producto.getName())) {
+        // Si se quiere cambiar el nombre porque no es el mismo que ya tenía
+        if (!newProductRequest.getName().equalsIgnoreCase(productToUpdate.getName())) {
+            // El nuevo nombre tiene que ser único
             if(productRepository.existsByName(nombreConFormato)) {
                 throw new DuplicateResourceException("Producto con nombre '" + nombreConFormato + "' ya existe" );
             }
         }
         
-        producto.setName(newProduct.getName());
-        producto.setPrice(newProduct.getPrice());
-        producto.setStock(newProduct.getStock());
-        producto.setDescription(newProduct.getDescription());
-        producto.setImageUrl(newProduct.getImageUrl());
+        // Lo hacemos más fácil, actualizamos todos  los atributos
+        // También se podrían actualizar solo los que esten modificados
+        productToUpdate.setName(newProductRequest.getName());
+        productToUpdate.setPrice(newProductRequest.getPrice());
+        productToUpdate.setStock(newProductRequest.getStock());
+        productToUpdate.setDescription(newProductRequest.getDescription());
+        productToUpdate.setImageUrl(newProductRequest.getImageUrl());
+        
+        Product updatedProduct = productRepository.save(productToUpdate);
 
-        productRepository.save(producto);
-        return producto;
+        return ProductMapper.toDto(updatedProduct);
     }
 
-    public Product findProductById(Long id) {
-        Product producto = productRepository.findById(id)
+    public ProductResponse findProductById(Long id) {
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el producto con id " + id));
-        return producto;
+        return ProductMapper.toDto(product);
     }
 
     public void deleteProduct(Long id) {

@@ -62,6 +62,7 @@ public class OrderService {
             
             // Reducción del stock
             product.setStock(availableQuantity - requestedQuantity);
+            productRepository.save(product);
             
             // Se guarda información en el orderItem
             orderItem.setQuantity(orderItemRequest.getQuantity());

@@ -1,6 +1,7 @@
 package com.techlab.spring1.controller;
 
-import com.techlab.spring1.model.Product;
+import com.techlab.spring1.dto.ProductRequest;
+import com.techlab.spring1.dto.ProductResponse;
 import com.techlab.spring1.service.ProductService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -23,26 +24,24 @@ public class ProductController {
         this.productService = productService;
     }
 
-    // GET /products?name="product"&price=123
     @GetMapping
-    public List<Product> listProducts(@RequestParam(required = false, defaultValue = "") String name,
-            @RequestParam(required = false, defaultValue = "0") Double price) {
-        return productService.findAllProducts(name, price);
+    public List<ProductResponse> listProducts() {
+        return productService.findAllProducts();
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) {
-        Product nuevoProducto = productService.saveProduct(product);
-        return new ResponseEntity<>(nuevoProducto, HttpStatus.CREATED); // 201
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest productRequest) {
+        ProductResponse newProductResponse = productService.saveProduct(productRequest);
+        return new ResponseEntity<>(newProductResponse, HttpStatus.CREATED); // 201
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id) {
+    public ProductResponse getProductById(@PathVariable Long id) {
         return productService.findProductById(id);
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @Valid @RequestBody Product newProduct) {
+    public ProductResponse updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequest newProduct) {
         return productService.updateProduct(id, newProduct);
     }
 

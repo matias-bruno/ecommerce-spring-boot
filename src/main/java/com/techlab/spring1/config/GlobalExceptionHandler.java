@@ -1,6 +1,7 @@
 package com.techlab.spring1.config;
 
 import com.techlab.spring1.exception.DuplicateResourceException;
+import com.techlab.spring1.exception.InsufficientStockException;
 import com.techlab.spring1.exception.ResourceNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +44,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateResourceException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleConflict(DuplicateResourceException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+        return errors;
+    }
+    
+    @ExceptionHandler(InsufficientStockException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleInsufficientStock(InsufficientStockException ex) {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", ex.getMessage());
         return errors;

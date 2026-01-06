@@ -23,6 +23,7 @@ public class Order {
     private Double totalAmount;
 
     // Relación bidireccional con LineaPedido
+    // Este order que figura acá es el campo order en los orderItems
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 }

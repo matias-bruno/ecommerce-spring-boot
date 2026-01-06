@@ -1,6 +1,12 @@
 package com.techlab.spring1.model;
 
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.validator.constraints.URL;
@@ -20,23 +26,19 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @NotBlank(message = "El nombre es obligatorio")
-    @Column(unique = true)
-    @Size(min = 3, max = 100, message = "El nombre debe ser 3 y 100 caracteres")
+    @Column(nullable = false, unique = true, length = 100)
     private String name;
     
-    @NotNull(message = "El precio es obligatorio")
-    @Positive(message = "El precio debe ser positivo")
+    @Column(nullable = false)
     private Double  price;
     
-    @NotNull(message = "El stock es obligatorio")
-    @Min(value = 0, message = "El stock no puede ser negativo")
+    @Column(nullable = false)
     private Integer stock;
     
-    @Size(max = 500, message = "La descripcion no puede exceder los 500 caracteres")
+    @Column(nullable = false, length = 500)
     private String description;
 
-    @URL(message = "La url ingresada no es  válida")
+    @Column(name = "image_url", length = 500)
     private String imageUrl;
     
 }

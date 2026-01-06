@@ -17,7 +17,7 @@ public class OrderItem {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     
-    // Referencia al pedido
+    // Referencia al pedido (hace que la relación sea bidireccional)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     @JsonIgnore // IGNORAR ESTA REFERENCIA AL SERIALIZAR OrderItem
