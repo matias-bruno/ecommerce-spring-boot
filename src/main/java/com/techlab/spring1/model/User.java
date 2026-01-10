@@ -3,6 +3,7 @@ package com.techlab.spring1.model;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Data;
 
 /**
  *
@@ -10,6 +11,8 @@ import java.util.Set;
  */
 
 @Entity
+@Data
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

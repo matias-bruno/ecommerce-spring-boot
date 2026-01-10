@@ -1,6 +1,7 @@
 package com.techlab.spring1.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 /**
  *
@@ -8,6 +9,8 @@ import jakarta.persistence.*;
  */
 
 @Entity
+@Data
+@Table(name = "roles")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,4 +18,10 @@ public class Role {
     
     @Column(unique = true, nullable = false)
     private String name;
+    
+    public Role() { };
+    
+    public Role(String name) {
+        this.name = name;
+    }
 }
