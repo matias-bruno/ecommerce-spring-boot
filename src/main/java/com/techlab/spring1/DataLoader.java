@@ -11,6 +11,7 @@ import com.techlab.spring1.repository.UserRepository;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.Resource;
@@ -22,7 +23,7 @@ import org.springframework.stereotype.Component;
  * @author matias-bruno
  */
 @Component
-public class ProductDataLoader implements CommandLineRunner {
+public class DataLoader implements CommandLineRunner {
 
     private final ProductRepository productoRepository;
     private final UserRepository userRepository;
@@ -33,7 +34,7 @@ public class ProductDataLoader implements CommandLineRunner {
     @Value("classpath:data/productos.json")
     private Resource productosJson;
 
-    public ProductDataLoader(ProductRepository productoRepository, 
+    public DataLoader(ProductRepository productoRepository, 
             UserRepository userRepository, RoleRepository roleRepository,
             PasswordEncoder passwordEncoder, ObjectMapper objectMapper) {
         this.productoRepository = productoRepository;
@@ -46,8 +47,11 @@ public class ProductDataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         
-        Role adminRole = this.roleRepository.save(new Role("ADMIN"));
-        Role userRole = this.roleRepository.save(new Role("USER"));
+        if(this.roleRepository.count() == 0) {
+            this.roleRepository.save(new Role("ADMIN"));
+            this.roleRepository.save(new Role("USER"));
+            System.out.println("ADMIN and USER roles created");
+        }
         
         if (userRepository.findByUsername("admin").isEmpty()) {
             User admin = new User();
@@ -55,10 +59,28 @@ public class ProductDataLoader implements CommandLineRunner {
             admin.setPassword(passwordEncoder.encode("password-facil")); // Usa una contraseña segura en producción
             admin.setEmail("admin@ecommerce.com");
             HashSet<Role> roles = new HashSet<>();
-            roles.add(adminRole);
-            admin.setRoles(roles);
-            userRepository.save(admin);
-            System.out.println("ADMIN user created!");
+            Optional<Role> optRole = this.roleRepository.findByName("ADMIN");
+            if(optRole.isPresent()) {
+                roles.add(optRole.get());
+                admin.setRoles(roles);
+                userRepository.save(admin);
+                System.out.println("ADMIN user created!");
+            }
+        }
+        
+        if (userRepository.findByUsername("newuser").isEmpty()) {
+            User newuser = new User();
+            newuser.setUsername("newuser");
+            newuser.setPassword(passwordEncoder.encode("otro-password")); // Usa una contraseña segura en producción
+            newuser.setEmail("newuser@mail.com");
+            HashSet<Role> roles = new HashSet<>();
+            Optional<Role> optRole = this.roleRepository.findByName("USER");
+            if(optRole.isPresent()) {
+                roles.add(optRole.get());
+                newuser.setRoles(roles);
+                userRepository.save(newuser);
+                System.out.println("User created!");
+            }
         }
 
         if (productoRepository.count() > 0) {
