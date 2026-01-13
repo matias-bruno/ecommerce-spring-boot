@@ -30,7 +30,7 @@ public class OrderItem {
     private Double priceAtPurchase; 
     
     // Referencia opcional al producto original (para referencia)
-    @ManyToOne(fetch = FetchType.EAGER) // Funciona con EAGER y no con LAZY
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product; 
 }

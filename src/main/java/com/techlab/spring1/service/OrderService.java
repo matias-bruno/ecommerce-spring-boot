@@ -5,15 +5,21 @@ import com.techlab.spring1.model.Order;
 import com.techlab.spring1.model.OrderItem;
 import com.techlab.spring1.model.Product;
 import com.techlab.spring1.repository.ProductRepository;
-import com.techlab.spring1.dto.OrderItemRequest;
+import com.techlab.spring1.dto.OrderItemDto;
 import com.techlab.spring1.dto.OrderRequest;
+import com.techlab.spring1.dto.OrderResponse;
 import com.techlab.spring1.exception.InsufficientStockException;
+import com.techlab.spring1.mapper.OrderMapper;
+import com.techlab.spring1.model.User;
 import com.techlab.spring1.repository.OrderRepository;
+import com.techlab.spring1.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,23 +31,28 @@ public class OrderService {
     
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
     
     
     public OrderService(ProductRepository productRepository,
-            OrderRepository orderRepository) {
+            OrderRepository orderRepository,
+            UserRepository userRepository) {
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
-    public Order createOrder(OrderRequest orderRequest) {
+    public OrderResponse createOrder(OrderRequest orderRequest, String username) {
         
         List<OrderItem> orderItems = new ArrayList<>();
         Double total = 0.0;
         Order order = new Order();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         
         // Iterar sobre los ítems recibidos del frontend
-        for(OrderItemRequest orderItemRequest : orderRequest.getItems()) {
+        for(OrderItemDto orderItemRequest : orderRequest.getOrderItems()) {
             OrderItem orderItem = new OrderItem();
             // Obtener el producto
             Long productId = orderItemRequest.getProductId();
@@ -81,13 +92,24 @@ public class OrderService {
         order.setOrderDate(LocalDateTime.now());
         order.setTotalAmount(total);
         order.setOrderItems(orderItems);
+        order.setUser(user);
         
-        // Guardamos y devolvemos el nuevo pedido
-        return orderRepository.save(order);
+        // Guardamos el nuevo pedido
+        Order savedOrder = orderRepository.save(order);
+        return OrderMapper.toDto(savedOrder);
     }
 
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public List<OrderResponse> getAllOrders() {
+        return orderRepository.findAll()
+                .stream()
+                .map(OrderMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public OrderResponse getOrderById(Long id) {
+        Order order = orderRepository.findById(id).
+                orElseThrow(() -> new ResourceNotFoundException("No se encontró el pedido con id " + id));
+        return OrderMapper.toDto(order);
     }
 
 }

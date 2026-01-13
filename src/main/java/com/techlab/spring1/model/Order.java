@@ -21,6 +21,10 @@ public class Order {
     private LocalDateTime orderDate;
 
     private Double totalAmount;
+    
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     // Relación bidireccional con LineaPedido
     // Este order que figura acá es el campo order en los orderItems
