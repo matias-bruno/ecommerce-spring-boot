@@ -14,5 +14,5 @@ import lombok.Data;
 public class OrderRequest {
     @NotEmpty
     @Valid // Para validar cada item individualmente
-    private List<OrderItemDto> orderItems;
+    private List<OrderItemRequest> orderItems;
 }

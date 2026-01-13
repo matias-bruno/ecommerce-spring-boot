@@ -10,7 +10,7 @@ import lombok.Data;
  */
 
 @Data
-public class OrderItemDto {
+public class OrderItemRequest {
    @NotNull(message = "El id de producto es obligatorio")
    private Long productId;
    @Min(value = 1, message = "La cantidad debe ser al menos 1")

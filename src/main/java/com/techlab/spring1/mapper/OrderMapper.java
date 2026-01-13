@@ -1,7 +1,6 @@
 package com.techlab.spring1.mapper;
 
-import com.techlab.spring1.dto.OrderItemDto;
-import com.techlab.spring1.dto.OrderRequest;
+import com.techlab.spring1.dto.OrderItemResponse;
 import com.techlab.spring1.dto.OrderResponse;
 import com.techlab.spring1.model.Order;
 import com.techlab.spring1.model.OrderItem;
@@ -21,21 +20,20 @@ public class OrderMapper {
         orderResponse.setTotalAmount(order.getTotalAmount());
         orderResponse.setUserId(order.getUser().getId());
         
-        List<OrderItemDto> orderItemDtos = new ArrayList<>();
+        List<OrderItemResponse> orderItemDtos = new ArrayList<>();
         
         for(OrderItem item : order.getOrderItems()) {
-            OrderItemDto itemDto = new OrderItemDto();
+            OrderItemResponse itemDto = new OrderItemResponse();
             itemDto.setProductId(item.getProduct().getId());
             itemDto.setQuantity(item.getQuantity());
+            itemDto.setProductName(item.getProductName());
+            itemDto.setPriceAtPurchase(item.getPriceAtPurchase());
+            itemDto.setSubTotal(item.getQuantity() * item.getPriceAtPurchase());
             orderItemDtos.add(itemDto);
         }
         
         orderResponse.setOrderItems(orderItemDtos);
         
         return orderResponse;
-    }
-    
-    public static Order toEntity(OrderRequest orderRequest) {
-        return null;
     }
 }

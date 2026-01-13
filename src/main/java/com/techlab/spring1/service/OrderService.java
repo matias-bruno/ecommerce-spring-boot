@@ -5,7 +5,7 @@ import com.techlab.spring1.model.Order;
 import com.techlab.spring1.model.OrderItem;
 import com.techlab.spring1.model.Product;
 import com.techlab.spring1.repository.ProductRepository;
-import com.techlab.spring1.dto.OrderItemDto;
+import com.techlab.spring1.dto.OrderItemRequest;
 import com.techlab.spring1.dto.OrderRequest;
 import com.techlab.spring1.dto.OrderResponse;
 import com.techlab.spring1.exception.InsufficientStockException;
@@ -52,7 +52,7 @@ public class OrderService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         
         // Iterar sobre los ítems recibidos del frontend
-        for(OrderItemDto orderItemRequest : orderRequest.getOrderItems()) {
+        for(OrderItemRequest orderItemRequest : orderRequest.getOrderItems()) {
             OrderItem orderItem = new OrderItem();
             // Obtener el producto
             Long productId = orderItemRequest.getProductId();
