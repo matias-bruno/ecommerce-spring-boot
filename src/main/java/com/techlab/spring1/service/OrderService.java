@@ -13,12 +13,15 @@ import com.techlab.spring1.mapper.OrderMapper;
 import com.techlab.spring1.model.User;
 import com.techlab.spring1.repository.OrderRepository;
 import com.techlab.spring1.repository.UserRepository;
+import com.techlab.spring1.utils.CollectionUtils;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -45,22 +48,34 @@ public class OrderService {
     @Transactional
     public OrderResponse createOrder(OrderRequest orderRequest, String username) {
         
-        List<OrderItem> orderItems = new ArrayList<>();
-        Double total = 0.0;
-        Order order = new Order();
+        //Validamos que el usuario existe
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         
+        List<OrderItem> orderItems = new ArrayList<>();
+        Double total = 0.0;
+        Order order = new Order();
+                
+        List<Long> productIds = orderRequest.getOrderItems().stream()
+                .map(item -> item.getProductId())
+                .toList();
+        
+        // Obtenemos todos los productos con una sola query
+        List<Product> products = productRepository.findAllById(productIds);
+        
+        Map<Long,Product> productMap = CollectionUtils.listToMap(products);
+        
+        
         // Iterar sobre los ítems recibidos del frontend
         for(OrderItemRequest orderItemRequest : orderRequest.getOrderItems()) {
-            OrderItem orderItem = new OrderItem();
             // Obtener el producto
             Long productId = orderItemRequest.getProductId();
-            Optional<Product> productOpt = productRepository.findById(productId);
-            if(productOpt.isEmpty()) {
+            
+            // Buscando en mapa hacemos más rápido
+            Product product = productMap.get(productId);
+            if(product == null) {
                 throw new ResourceNotFoundException("No se encontró el producto con id " + productId);
             }
-            Product product = productOpt.get();
             
             // Validación de stock
             int requestedQuantity = orderItemRequest.getQuantity();
@@ -73,9 +88,9 @@ public class OrderService {
             
             // Reducción del stock
             product.setStock(availableQuantity - requestedQuantity);
-            productRepository.save(product);
             
             // Se guarda información en el orderItem
+            OrderItem orderItem = new OrderItem();
             orderItem.setQuantity(orderItemRequest.getQuantity());
             orderItem.setProduct(product);
             orderItem.setOrder(order);
@@ -88,15 +103,17 @@ public class OrderService {
             total += product.getPrice() * orderItemRequest.getQuantity();
         }
         
-        // Actualizamos los datos del pedido
+        // Completamos el pedido
         order.setOrderDate(LocalDateTime.now());
         order.setTotalAmount(total);
         order.setOrderItems(orderItems);
         order.setUser(user);
+        orderRepository.save(order);
         
-        // Guardamos el nuevo pedido
-        Order savedOrder = orderRepository.save(order);
-        return OrderMapper.toDto(savedOrder);
+        // Actualizamos los productos con el nuevo stock
+        productRepository.saveAll(products);
+        
+        return OrderMapper.toDto(order);
     }
 
     public List<OrderResponse> getAllOrders() {
@@ -106,10 +123,28 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    public OrderResponse getOrderById(Long id) {
+    public OrderResponse getOrderById(Long id, Authentication authentication) {
         Order order = orderRepository.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException("No se encontró el pedido con id " + id));
+        
+        String currentUsername = authentication.getName();
+        
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        
+        if(!isAdmin && !order.getUser().getUsername().equals(currentUsername)) {
+            throw new AccessDeniedException("No tienes permiso para ver este pedido.");
+        }
         return OrderMapper.toDto(order);
+    }
+
+    public List<OrderResponse> getMyOrders(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return orderRepository.findByUser(user)
+                .stream()
+                .map(OrderMapper::toDto)
+                .collect(Collectors.toList());
     }
 
 }

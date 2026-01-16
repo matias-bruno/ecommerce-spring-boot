@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.*;
 
 /**
@@ -38,5 +39,9 @@ public class Product {
 
     @Column(name = "image_url", length = 500)
     private String imageUrl;
+    
+    // Campo agregado para control de concurrencia
+    @Version
+    private int version;
     
 }

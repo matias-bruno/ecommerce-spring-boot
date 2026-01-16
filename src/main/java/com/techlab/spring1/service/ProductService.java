@@ -42,33 +42,31 @@ public class ProductService {
         return ProductMapper.toDto(newProduct);
     }
 
-    public ProductResponse updateProduct(Long id, ProductRequest newProductRequest) {
-        Product productToUpdate = productRepository.findById(id)
+    public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el producto con id " + id));
         
         // Queremos convertir la cadena de nombre a un formato pre-establecido
-        String nombreConFormato = ProductService.formatearNombre(newProductRequest.getName());
-        newProductRequest.setName(nombreConFormato);
+        String nombreConFormato = ProductService.formatearNombre(productRequest.getName());
+        productRequest.setName(nombreConFormato);
         
         // Si se quiere cambiar el nombre porque no es el mismo que ya tenía
-        if (!newProductRequest.getName().equalsIgnoreCase(productToUpdate.getName())) {
+        if (!productRequest.getName().equalsIgnoreCase(product.getName())) {
             // El nuevo nombre tiene que ser único
             if(productRepository.existsByName(nombreConFormato)) {
                 throw new DuplicateResourceException("Producto con nombre '" + nombreConFormato + "' ya existe" );
             }
         }
         
-        // Lo hacemos más fácil, actualizamos todos  los atributos
-        // También se podrían actualizar solo los que esten modificados
-        productToUpdate.setName(newProductRequest.getName());
-        productToUpdate.setPrice(newProductRequest.getPrice());
-        productToUpdate.setStock(newProductRequest.getStock());
-        productToUpdate.setDescription(newProductRequest.getDescription());
-        productToUpdate.setImageUrl(newProductRequest.getImageUrl());
+        product.setName(productRequest.getName());
+        product.setPrice(productRequest.getPrice());
+        product.setStock(productRequest.getStock());
+        product.setDescription(productRequest.getDescription());
+        product.setImageUrl(productRequest.getImageUrl());
         
-        Product updatedProduct = productRepository.save(productToUpdate);
+        productRepository.save(product);
 
-        return ProductMapper.toDto(updatedProduct);
+        return ProductMapper.toDto(product);
     }
 
     public ProductResponse findProductById(Long id) {
@@ -83,6 +81,7 @@ public class ProductService {
         productRepository.delete(producto);
     }
 
+    // TODO: pasar este método a una clase utilitaria de cadenas
     // Metodo auxiliar para nombres de productos
     private static String formatearNombre(String nombre) {
         String[] palabras = nombre.trim().split("\\s+");
