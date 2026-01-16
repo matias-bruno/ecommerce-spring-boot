@@ -7,6 +7,8 @@ import jakarta.persistence.OptimisticLockException;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,9 +21,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    
-    // TODO: devolver errorResponse
 
+    // TODO: devolver errorResponse
     // Maneja @Valid / @RequestBody errors (HTTP 400)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -59,7 +60,7 @@ public class GlobalExceptionHandler {
         errors.put("error", ex.getMessage());
         return errors;
     }
-    
+
     @ExceptionHandler(OptimisticLockException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleOptimisticLockException(OptimisticLockException ex) {
@@ -67,10 +68,14 @@ public class GlobalExceptionHandler {
         errors.put("error", "El producto fue actualizado por otro usuario. Intente nuevamente.\"");
         return errors;
     }
-           
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> handleGenericException(Exception ex) {
+    public Map<String, String> handleGenericException(Exception ex) throws Exception {
+        if (ex instanceof AuthenticationException ||
+            ex instanceof AccessDeniedException) {
+            throw ex; // No se manejan excepciones de seguridad desde aquí
+        }
         Map<String, String> errors = new HashMap<>();
         errors.put("error", "Ocurrió un error inesperado. Intente más tarde.");
         return errors;
