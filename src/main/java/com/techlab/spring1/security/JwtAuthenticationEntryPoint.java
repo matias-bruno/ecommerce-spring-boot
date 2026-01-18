@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Instant;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -23,10 +24,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         response.getWriter().write("""
             {
+              "status": 401,
               "error": "Unauthorized",
-              "message": "Debe autenticarse para acceder a este recurso"
+              "message": "Debe autenticarse para acceder a este recurso",
+              "path": "%s",
+              "timestamp": "%s"
             }
-        """);
+        """.formatted(request.getRequestURI(), Instant.now()));
     }
 
 }

@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Instant;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -23,10 +24,13 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         response.getWriter().write("""
             {
+              "status": 403,
               "error": "Forbidden",
-              "message": "No tiene permisos para acceder a este recurso"
+              "message": "No tiene permisos para acceder a este recurso",
+              "path": "%s",
+              "timestamp": "%s"
             }
-        """);
+        """.formatted(request.getRequestURI(), Instant.now()));
     }
 
 }
