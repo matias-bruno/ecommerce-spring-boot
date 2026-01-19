@@ -138,7 +138,7 @@ public class OrderService {
         return OrderMapper.toDto(order);
     }
 
-    public List<OrderResponse> getMyOrders(String username) {
+    public List<OrderResponse> getOrdersByUser(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return orderRepository.findByUser(user)

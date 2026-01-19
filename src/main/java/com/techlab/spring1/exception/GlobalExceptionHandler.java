@@ -1,9 +1,6 @@
 package com.techlab.spring1.exception;
 
 import com.techlab.spring1.dto.ErrorResponse;
-import com.techlab.spring1.exception.DuplicateResourceException;
-import com.techlab.spring1.exception.InsufficientStockException;
-import com.techlab.spring1.exception.ResourceNotFoundException;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
@@ -106,7 +103,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 409,
                 "Conflict",
-                ex.getMessage(),
+                "El producto fue actualizado por otro usuario, intente nuevamente.",
                 request.getRequestURI(),
                 Instant.now()
         );

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping("/api/orders")
 public class OrderController {
 
     private final OrderService orderService;
@@ -30,29 +28,35 @@ public class OrderController {
     }
     
         
-    @PostMapping
+    @PostMapping("/api/orders")
     @PreAuthorize("hasRole('USER')")
     public OrderResponse createOrder(@Valid @RequestBody OrderRequest orderRequest, Authentication authentication) {
         String username = authentication.getName();
         return orderService.createOrder(orderRequest, username);
     }
     
-    @GetMapping
+    @GetMapping("/api/orders")
     @PreAuthorize("hasRole('USER')")
     public List<OrderResponse> getMyOrders(Authentication authentication) {
         String username = authentication.getName();
-        return orderService.getMyOrders(username);
+        return orderService.getOrdersByUser(username);
     }
     
-    @GetMapping("/admin")
+    @GetMapping("/api/admin/orders")
     @PreAuthorize("hasRole('ADMIN')")
     public List<OrderResponse> getAllOrders() {
         return orderService.getAllOrders();
     }
     
-    @GetMapping("/{id}")
+    @GetMapping("/api/orders/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public OrderResponse getOrderById(@PathVariable Long id, Authentication authentication) {
         return orderService.getOrderById(id, authentication);
+    }
+    
+    @GetMapping("/api/admin/orders/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<OrderResponse> getOrdersByUser(@PathVariable String username) {
+        return orderService.getOrdersByUser(username);
     }
 }
