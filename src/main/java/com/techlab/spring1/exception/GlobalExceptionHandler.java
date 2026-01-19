@@ -1,4 +1,4 @@
-package com.techlab.spring1.config;
+package com.techlab.spring1.exception;
 
 import com.techlab.spring1.dto.ErrorResponse;
 import com.techlab.spring1.exception.DuplicateResourceException;
