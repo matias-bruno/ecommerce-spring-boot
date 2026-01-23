@@ -4,7 +4,9 @@ import com.techlab.spring1.dto.ProductRequest;
 import com.techlab.spring1.dto.ProductResponse;
 import com.techlab.spring1.service.ProductService;
 import jakarta.validation.Valid;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,9 +25,11 @@ public class ProductController {
         this.productService = productService;
     }
 
+    // Le pasamos un PageableDefault con los valores que usaremos por defecto
+    // Una url personalizada sería "/api/products?page=1&size=20&sort=price,asc
     @GetMapping("/api/products")
-    public List<ProductResponse> listProducts() {
-        return productService.findAllProducts();
+    public Page<ProductResponse> getAllProducts(@PageableDefault(page = 0, size = 20, sort = "name") Pageable pageable) {
+        return productService.findAllProducts(pageable);
     }
 
     @GetMapping("/api/products/{id}")
@@ -42,8 +46,8 @@ public class ProductController {
     
     @PutMapping("/api/admin/products/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ProductResponse updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequest newProduct) {
-        return productService.updateProduct(id, newProduct);
+    public ProductResponse updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequest productRequest) {
+        return productService.updateProduct(id, productRequest);
     }
 
     @DeleteMapping("/api/admin/products/{id}")

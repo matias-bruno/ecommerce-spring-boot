@@ -8,8 +8,8 @@ import com.techlab.spring1.mapper.ProductMapper;
 import com.techlab.spring1.model.Product;
 import com.techlab.spring1.repository.ProductRepository;
 import com.techlab.spring1.util.TextUtils;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,11 +25,9 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<ProductResponse> findAllProducts() {
-        return this.productRepository.findAll()
-                .stream()
-                .map(ProductMapper::toDto)
-                .collect(Collectors.toList());
+    public Page<ProductResponse> findAllProducts(Pageable pageable) {
+        return this.productRepository.findAll(pageable)
+                .map(ProductMapper::toDto);
     }
 
     public ProductResponse saveProduct(ProductRequest newProductRequest) {
