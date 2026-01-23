@@ -1,4 +1,4 @@
-package com.techlab.spring1.utils;
+package com.techlab.spring1.util;
 
 import com.techlab.spring1.model.Product;
 import java.util.HashMap;

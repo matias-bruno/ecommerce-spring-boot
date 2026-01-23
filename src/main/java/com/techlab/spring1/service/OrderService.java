@@ -13,7 +13,7 @@ import com.techlab.spring1.mapper.OrderMapper;
 import com.techlab.spring1.model.User;
 import com.techlab.spring1.repository.OrderRepository;
 import com.techlab.spring1.repository.UserRepository;
-import com.techlab.spring1.utils.CollectionUtils;
+import com.techlab.spring1.util.CollectionUtils;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

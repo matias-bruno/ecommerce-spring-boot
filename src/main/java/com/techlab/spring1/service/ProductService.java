@@ -7,6 +7,7 @@ import com.techlab.spring1.exception.ResourceNotFoundException;
 import com.techlab.spring1.mapper.ProductMapper;
 import com.techlab.spring1.model.Product;
 import com.techlab.spring1.repository.ProductRepository;
+import com.techlab.spring1.util.TextUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class ProductService {
     }
 
     public ProductResponse saveProduct(ProductRequest newProductRequest) {
-        String nombreConFormato = ProductService.formatearNombre(newProductRequest.getName());
+        String nombreConFormato = TextUtils.toTitleCase(newProductRequest.getName());
         newProductRequest.setName(nombreConFormato);
         if(productRepository.existsByName(nombreConFormato)) {
             throw new DuplicateResourceException("Producto con nombre '" + nombreConFormato + "' ya existe" );
@@ -47,7 +48,7 @@ public class ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el producto con id " + id));
         
         // Queremos convertir la cadena de nombre a un formato pre-establecido
-        String nombreConFormato = ProductService.formatearNombre(productRequest.getName());
+        String nombreConFormato = TextUtils.toTitleCase(productRequest.getName());
         productRequest.setName(nombreConFormato);
         
         // Si se quiere cambiar el nombre porque no es el mismo que ya tenía
@@ -79,18 +80,5 @@ public class ProductService {
         Product producto = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el producto con id " + id));
         productRepository.delete(producto);
-    }
-
-    // TODO: pasar este método a una clase utilitaria de cadenas
-    // Metodo auxiliar para nombres de productos
-    private static String formatearNombre(String nombre) {
-        String[] palabras = nombre.trim().split("\\s+");
-        StringBuilder sb = new StringBuilder();
-        for (String palabra : palabras) {
-            sb.append(palabra.substring(0, 1).toUpperCase());
-            sb.append(palabra.substring(1).toLowerCase());
-            sb.append(" ");
-        }
-        return sb.toString().trim();
     }
 }
