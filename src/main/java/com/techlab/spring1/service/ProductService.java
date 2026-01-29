@@ -25,11 +25,15 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public Page<ProductResponse> findAllProducts(Pageable pageable) {
+    public Page<ProductResponse> getProducts(Pageable pageable, String name) {
+        if(name.trim().length() >= 3) {
+            return productRepository.findByNameContainingIgnoreCase(pageable, name)
+                .map(ProductMapper::toDto);    
+        }
         return this.productRepository.findAll(pageable)
                 .map(ProductMapper::toDto);
     }
-
+    
     public ProductResponse saveProduct(ProductRequest newProductRequest) {
         String nombreConFormato = TextUtils.toTitleCase(newProductRequest.getName());
         newProductRequest.setName(nombreConFormato);

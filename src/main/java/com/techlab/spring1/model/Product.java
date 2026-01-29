@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-import lombok.*;
+import lombok.Data;
 
 /**
  *
@@ -17,8 +17,6 @@ import lombok.*;
 @Entity
 @Table(name="products")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Product {
 
     @Id

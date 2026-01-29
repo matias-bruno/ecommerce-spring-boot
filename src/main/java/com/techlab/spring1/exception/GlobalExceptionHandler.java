@@ -108,7 +108,7 @@ public class GlobalExceptionHandler {
                 Instant.now()
         );
     }
-
+    
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleGenericException(Exception ex,
@@ -120,7 +120,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 500,
                 "Internal Server Error",
-                "Ocurrió un error inesperado, vuelva a intentarlo",
+                ex.getMessage(),
                 request.getRequestURI(),
                 Instant.now()
         );
