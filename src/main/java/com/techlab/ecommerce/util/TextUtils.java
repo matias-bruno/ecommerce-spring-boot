@@ -1,5 +1,7 @@
 package com.techlab.ecommerce.util;
 
+import java.text.Normalizer;
+
 /**
  *
  * @author matias-bruno
@@ -14,5 +16,21 @@ public class TextUtils {
             sb.append(" ");
         }
         return sb.toString().trim();
+    }
+    
+    public static String removeAccents(String text) {
+        text = Normalizer.normalize(text, Normalizer.Form.NFD);
+        text = text.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        return text;
+    }
+
+    public static String slugify(String name) {
+        String slug = name.toLowerCase();
+        slug = removeAccents(slug);
+        //slug = slug.replaceAll("ñ", "n");
+        slug = slug.replaceAll("[^a-z0-9-]+", " ");
+        slug = slug.trim().replaceAll("\\s+", " ");
+        slug = slug.replaceAll(" ", "-");
+        return slug;
     }
 }

@@ -1,0 +1,98 @@
+[
+    {
+        "name": "Beauty",
+        "slug": "beauty"
+    },
+    {
+        "name": "Fragrances",
+        "slug": "fragrances"
+    },
+    {
+        "name": "Furniture",
+        "slug": "furniture"
+    },
+    {
+        "name": "Groceries",
+        "slug": "groceries"
+    },
+    {
+        "name": "Home Decoration",
+        "slug": "home-decoration"
+    },
+    {
+        "name": "Kitchen Accessories",
+        "slug": "kitchen-accessories"
+    },
+    {
+        "name": "Laptops",
+        "slug": "laptops"
+    },
+    {
+        "name": "Men Shirts",
+        "slug": "men-shirts"
+    },
+    {
+        "name": "Men Shoes",
+        "slug": "men-shoes"
+    },
+    {
+        "name": "Men Watches",
+        "slug": "men-watches"
+    },
+    {
+        "name": "Mobile Accessories",
+        "slug": "mobile-accessories"
+    },
+    {
+        "name": "Motorcycle",
+        "slug": "motorcycle"
+    },
+    {
+        "name": "Skin Care",
+        "slug": "skin-care"
+    },
+    {
+        "name": "Smartphones",
+        "slug": "smartphones"
+    },
+    {
+        "name": "Sports Accessories",
+        "slug": "sports-accessories"
+    },
+    {
+        "name": "Sunglasses",
+        "slug": "sunglasses"
+    },
+    {
+        "name": "Tablets",
+        "slug": "tablets"
+    },
+    {
+        "name": "Tops",
+        "slug": "tops"
+    },
+    {
+        "name": "Vehicle",
+        "slug": "vehicle"
+    },
+    {
+        "name": "Women Bags",
+        "slug": "women-bags"
+    },
+    {
+        "name": "Women Dresses",
+        "slug": "women-dresses"
+    },
+    {
+        "name": "Women Jewellery",
+        "slug": "women-jewellery"
+    },
+    {
+        "name": "Women Shoes",
+        "slug": "women-shoes"
+    },
+    {
+        "name": "Women Watches",
+        "slug": "women-watches"
+    }
+]
