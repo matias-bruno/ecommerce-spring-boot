@@ -2,14 +2,15 @@ package com.techlab.ecommerce;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.techlab.ecommerce.dto.ProductRequest;
 import com.techlab.ecommerce.model.Category;
-import com.techlab.ecommerce.model.Product;
 import com.techlab.ecommerce.model.Role;
 import com.techlab.ecommerce.model.User;
 import com.techlab.ecommerce.repository.CategoryRepository;
 import com.techlab.ecommerce.repository.ProductRepository;
 import com.techlab.ecommerce.repository.RoleRepository;
 import com.techlab.ecommerce.repository.UserRepository;
+import com.techlab.ecommerce.service.ProductService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -28,7 +29,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    private final ProductRepository productoRepository;
+    private final ProductRepository productRepository;
+    private final ProductService productService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final CategoryRepository categoryRepository;
@@ -38,14 +40,15 @@ public class DataLoader implements CommandLineRunner {
     @Value("classpath:data/categories.json")
     private Resource categoriesJson;
 
-    @Value("classpath:data/productos.json")
-    private Resource productosJson;
+    @Value("classpath:data/products.json")
+    private Resource productsJson;
 
-    public DataLoader(ProductRepository productoRepository,
+    public DataLoader(ProductRepository productoRepository, ProductService productService,
             UserRepository userRepository, RoleRepository roleRepository,
             CategoryRepository categoryRepository, PasswordEncoder passwordEncoder,
             ObjectMapper objectMapper) {
-        this.productoRepository = productoRepository;
+        this.productRepository = productoRepository;
+        this.productService = productService;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.categoryRepository = categoryRepository;
@@ -128,21 +131,27 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void loadProducts() throws IOException {
-        if (productoRepository.count() > 0) {
+        if (productRepository.count() > 0) {
             System.out.println("Productos ya cargados. Saltando precarga.");
             return;
         }
 
-        try (InputStream inputStream = productosJson.getInputStream()) {
+        List<ProductRequest> dtoList;
+        try (InputStream inputStream = productsJson.getInputStream()) {
 
-            List<Product> productos = objectMapper.readValue(
+            dtoList = objectMapper.readValue(
                     inputStream,
-                    new TypeReference<List<Product> >() { }
+                    new TypeReference<List<ProductRequest> >() { }
             );
 
-            productoRepository.saveAll(productos);
-
-            System.out.println("Productos precargados: " + productos.size());
+            for (ProductRequest dto : dtoList) {
+                productService.saveProduct(dto);
+            }
+            
+            System.out.println("Productos precargados: " + productRepository.count());
+            
+        } catch (Exception ex) {
+            System.out.println("Ocurrió un error: " + ex.getMessage());
         }
     }
 }

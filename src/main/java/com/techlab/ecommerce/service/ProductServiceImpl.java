@@ -5,7 +5,9 @@ import com.techlab.ecommerce.dto.ProductResponse;
 import com.techlab.ecommerce.exception.DuplicateResourceException;
 import com.techlab.ecommerce.exception.ResourceNotFoundException;
 import com.techlab.ecommerce.mapper.ProductMapper;
+import com.techlab.ecommerce.model.Category;
 import com.techlab.ecommerce.model.Product;
+import com.techlab.ecommerce.repository.CategoryRepository;
 import com.techlab.ecommerce.repository.ProductRepository;
 import com.techlab.ecommerce.util.TextUtils;
 import org.springframework.data.domain.Page;
@@ -19,9 +21,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository,
+            CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
@@ -41,7 +46,13 @@ public class ProductServiceImpl implements ProductService {
         if(productRepository.existsByName(nombreConFormato)) {
             throw new DuplicateResourceException("Producto con nombre '" + nombreConFormato + "' ya existe" );
         }
-        Product newProduct = ProductMapper.toEntity(newProductRequest);
+        
+        String categorySlug = newProductRequest.getCategorySlug();
+        Category category = categoryRepository.findBySlug(categorySlug)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria " + categorySlug + " no encontrada."));
+        
+        
+        Product newProduct = ProductMapper.toEntity(newProductRequest, category);
         productRepository.save(newProduct);
         return ProductMapper.toDto(newProduct);
     }

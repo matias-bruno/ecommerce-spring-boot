@@ -33,6 +33,9 @@ public class ProductRequest {
     
     @Size(max = 500, message = "La descripcion no puede exceder los 500 caracteres")
     private String description;
+    
+    @NotBlank(message = "La categoria es obligatoria.")
+    private String categorySlug;
 
     @URL(message = "La url ingresada no es  válida")
     private String imageUrl;
