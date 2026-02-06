@@ -9,9 +9,11 @@ import com.techlab.ecommerce.model.Category;
 import com.techlab.ecommerce.model.Product;
 import com.techlab.ecommerce.repository.CategoryRepository;
 import com.techlab.ecommerce.repository.ProductRepository;
+import com.techlab.ecommerce.repository.specs.ProductSpecifications;
 import com.techlab.ecommerce.util.TextUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,12 +32,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductResponse> getProducts(Pageable pageable, String name) {
-        if(name.trim().length() >= 3) {
-            return productRepository.findByNameContainingIgnoreCase(pageable, name)
-                .map(ProductMapper::toDto);    
-        }
-        return this.productRepository.findAll(pageable)
+    public Page<ProductResponse> getProducts(
+            String name,
+            String categorySlug,
+            Double minPrice,
+            Double maxPrice,
+            Pageable pageable) {
+        Specification<Product> spec = Specification.allOf(
+                ProductSpecifications.nameLike(name),
+                ProductSpecifications.hasCategorySlug(categorySlug),
+                ProductSpecifications.priceGreaterThanOrEqualTo(minPrice),
+                ProductSpecifications.priceLessThanOrEqualTo(maxPrice)
+        );
+        return this.productRepository.findAll(spec, pageable)
                 .map(ProductMapper::toDto);
     }
     

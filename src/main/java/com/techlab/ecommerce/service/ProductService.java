@@ -12,7 +12,12 @@ import org.springframework.data.domain.Pageable;
 
 public interface ProductService {
 
-    public Page<ProductResponse> getProducts(Pageable pageable, String name);
+    public Page<ProductResponse> getProducts(
+            String name,
+            String categorySlug,
+            Double minPrice,
+            Double maxPrice,
+            Pageable pageable);
     
     public ProductResponse saveProduct(ProductRequest newProductRequest);
 

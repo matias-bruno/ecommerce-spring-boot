@@ -28,9 +28,13 @@ public class ProductController {
     // Le pasamos un PageableDefault con los valores que usaremos por defecto
     // Una url personalizada sería "/api/products?page=1&size=20&sort=price,asc
     @GetMapping("/api/products")
-    public Page<ProductResponse> getProducts(@PageableDefault(page = 0, size = 20, sort = "name") Pageable pageable,
-            @RequestParam(required = false, defaultValue = "") String name) {
-        return productService.getProducts(pageable, name);
+    public Page<ProductResponse> getProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) Double minprice,
+            @RequestParam(required = false) Double maxprice,
+            @PageableDefault(page = 0, size = 20, sort = "name") Pageable pageable) {
+        return productService.getProducts(name, category, minprice, maxprice, pageable);
     }
 
     @GetMapping("/api/products/{id}")
