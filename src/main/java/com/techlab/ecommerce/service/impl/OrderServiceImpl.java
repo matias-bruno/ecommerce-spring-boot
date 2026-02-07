@@ -1,4 +1,4 @@
-package com.techlab.ecommerce.service;
+package com.techlab.ecommerce.service.impl;
 
 import com.techlab.ecommerce.dto.OrderItemRequest;
 import com.techlab.ecommerce.dto.OrderRequest;
@@ -13,6 +13,7 @@ import com.techlab.ecommerce.model.User;
 import com.techlab.ecommerce.repository.OrderRepository;
 import com.techlab.ecommerce.repository.ProductRepository;
 import com.techlab.ecommerce.repository.UserRepository;
+import com.techlab.ecommerce.service.OrderService;
 import com.techlab.ecommerce.util.CollectionUtils;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;

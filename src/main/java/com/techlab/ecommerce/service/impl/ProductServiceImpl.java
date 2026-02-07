@@ -1,4 +1,4 @@
-package com.techlab.ecommerce.service;
+package com.techlab.ecommerce.service.impl;
 
 import com.techlab.ecommerce.dto.ProductRequest;
 import com.techlab.ecommerce.dto.ProductResponse;
@@ -10,6 +10,7 @@ import com.techlab.ecommerce.model.Product;
 import com.techlab.ecommerce.repository.CategoryRepository;
 import com.techlab.ecommerce.repository.ProductRepository;
 import com.techlab.ecommerce.repository.specs.ProductSpecifications;
+import com.techlab.ecommerce.service.ProductService;
 import com.techlab.ecommerce.util.TextUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

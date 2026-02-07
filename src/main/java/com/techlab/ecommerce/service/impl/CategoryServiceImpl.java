@@ -1,4 +1,4 @@
-package com.techlab.ecommerce.service;
+package com.techlab.ecommerce.service.impl;
 
 import com.techlab.ecommerce.dto.CategoryRequest;
 import com.techlab.ecommerce.dto.CategoryResponse;
@@ -7,6 +7,7 @@ import com.techlab.ecommerce.exception.ResourceNotFoundException;
 import com.techlab.ecommerce.mapper.CategoryMapper;
 import com.techlab.ecommerce.model.Category;
 import com.techlab.ecommerce.repository.CategoryRepository;
+import com.techlab.ecommerce.service.CategoryService;
 import com.techlab.ecommerce.util.TextUtils;
 import java.util.List;
 import java.util.stream.Collectors;
