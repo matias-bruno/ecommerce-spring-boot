@@ -76,15 +76,24 @@ public class ProductServiceImpl implements ProductService {
         String nombreConFormato = TextUtils.toTitleCase(productRequest.getName());
         productRequest.setName(nombreConFormato);
         
-        // Si se quiere cambiar el nombre porque no es el mismo que ya tenía
+        // Si se quiere cambiar el nombre
         if (!productRequest.getName().equalsIgnoreCase(product.getName())) {
             // El nuevo nombre tiene que ser único
             if(productRepository.existsByName(nombreConFormato)) {
                 throw new DuplicateResourceException("Producto con nombre '" + nombreConFormato + "' ya existe" );
             }
+            product.setName(productRequest.getName());
         }
         
-        product.setName(productRequest.getName());
+        // Si se quiera cambiar la categoria
+        String categorySlug = productRequest.getCategorySlug();
+        if(!categorySlug.equals(product.getCategory().getSlug())) {
+            // La categoria tiene que existir
+            Category category = categoryRepository.findBySlug(categorySlug)
+                    .orElseThrow(() -> new ResourceNotFoundException("Categoria " + categorySlug + " no encontrada."));
+            product.setCategory(category);
+        }
+        
         product.setPrice(productRequest.getPrice());
         product.setStock(productRequest.getStock());
         product.setDescription(productRequest.getDescription());
