@@ -45,7 +45,10 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
     
-    // Campo agregado para control de concurrencia
+    // Atributo para borrado logico
+    private Boolean active = true;
+    
+    // Atributo para control de concurrencia
     @Version
     private int version;
     

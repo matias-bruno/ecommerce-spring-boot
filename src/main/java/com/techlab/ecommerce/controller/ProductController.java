@@ -1,15 +1,10 @@
 package com.techlab.ecommerce.controller;
 
-import com.techlab.ecommerce.dto.ProductRequest;
 import com.techlab.ecommerce.dto.ProductResponse;
 import com.techlab.ecommerce.service.ProductService;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -17,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
  * @author matias-bruno
  */
 @RestController
+@RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -27,38 +23,18 @@ public class ProductController {
 
     // Le pasamos un PageableDefault con los valores que usaremos por defecto
     // Una url personalizada sería "/api/products?page=1&size=20&sort=price,asc
-    @GetMapping("/api/products")
+    @GetMapping
     public Page<ProductResponse> getProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) Double minprice,
             @RequestParam(required = false) Double maxprice,
             @PageableDefault(page = 0, size = 20, sort = "name") Pageable pageable) {
-        return productService.getProducts(name, category, minprice, maxprice, pageable);
+        return productService.getProducts(name, category, minprice, maxprice, pageable, true);
     }
-
-    @GetMapping("/api/products/{id}")
+    
+    @GetMapping("/{id}")
     public ProductResponse getProductById(@PathVariable Long id) {
         return productService.findProductById(id);
-    }
-    
-    @PostMapping("/api/admin/products")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest productRequest) {
-        ProductResponse newProductResponse = productService.saveProduct(productRequest);
-        return new ResponseEntity<>(newProductResponse, HttpStatus.CREATED); // 201
-    }
-    
-    @PutMapping("/api/admin/products/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ProductResponse updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequest productRequest) {
-        return productService.updateProduct(id, productRequest);
-    }
-
-    @DeleteMapping("/api/admin/products/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.noContent().build(); // 204
     }
 }

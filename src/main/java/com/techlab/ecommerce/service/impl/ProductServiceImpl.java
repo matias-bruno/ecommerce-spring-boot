@@ -38,12 +38,14 @@ public class ProductServiceImpl implements ProductService {
             String categorySlug,
             Double minPrice,
             Double maxPrice,
-            Pageable pageable) {
+            Pageable pageable,
+            Boolean isActive) {
         Specification<Product> spec = Specification.allOf(
                 ProductSpecifications.nameLike(name),
                 ProductSpecifications.hasCategorySlug(categorySlug),
                 ProductSpecifications.priceGreaterThanOrEqualTo(minPrice),
-                ProductSpecifications.priceLessThanOrEqualTo(maxPrice)
+                ProductSpecifications.priceLessThanOrEqualTo(maxPrice),
+                ProductSpecifications.hasActive(isActive)
         );
         return this.productRepository.findAll(spec, pageable)
                 .map(ProductMapper::toDto);
@@ -85,7 +87,7 @@ public class ProductServiceImpl implements ProductService {
             product.setName(productRequest.getName());
         }
         
-        // Si se quiera cambiar la categoria
+        // Si se quiere cambiar la categoria
         String categorySlug = productRequest.getCategorySlug();
         if(!categorySlug.equals(product.getCategory().getSlug())) {
             // La categoria tiene que existir
@@ -113,8 +115,26 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(Long id) {
-        Product producto = productRepository.findById(id)
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el producto con id " + id));
-        productRepository.delete(producto);
+        product.setActive(false);
+        productRepository.save(product);
+    }
+    
+    @Override
+    public void restoreProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el producto con id " + id));
+        product.setActive(true);
+        productRepository.save(product);
+    }
+    
+    @Override
+    public void hardDeleteProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el producto con id " + id));
+        if (product.getActive() == true)
+            throw new IllegalStateException("No se puede borrar permanentemente un producto activo");
+        productRepository.delete(product);
     }
 }

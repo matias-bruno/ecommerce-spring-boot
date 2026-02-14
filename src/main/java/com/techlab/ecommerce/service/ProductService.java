@@ -17,7 +17,8 @@ public interface ProductService {
             String categorySlug,
             Double minPrice,
             Double maxPrice,
-            Pageable pageable);
+            Pageable pageable,
+            Boolean isActive);
     
     public ProductResponse saveProduct(ProductRequest newProductRequest);
 
@@ -26,4 +27,8 @@ public interface ProductService {
     public ProductResponse findProductById(Long id);
 
     public void deleteProduct(Long id);
+    
+    public void restoreProduct(Long id);
+    
+    public void hardDeleteProduct(Long id);
 }

@@ -18,9 +18,9 @@ import org.hibernate.validator.constraints.URL;
 public class ProductRequest {
     
     @NotBlank(message = "El nombre es obligatorio")
-    @Size(min = 3, max = 50, message = "El nombre debe ser 3 y 50 caracteres")
+    @Size(min = 3, max = 50, message = "El nombre debe tener entre 3 y 50 caracteres")
     @Pattern(regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚüÜñÑ\\s'-]+$", 
-             message = "El nombre solo debe contener letras, números y espacios y los caracteres especiales '-")
+             message = "El nombre solo debe contener letras, números, espacios y los caracteres especiales '-")
     private String name;
     
     @NotNull(message = "El precio es obligatorio")

@@ -36,4 +36,11 @@ public class ProductSpecifications {
             return cb.lessThanOrEqualTo(root.get("price"), maxPrice);
         };
     }
+    
+    public static Specification<Product> hasActive(Boolean isActive) {
+        return (root, query, cb) -> {
+            if (isActive == null) return null;
+            return cb.equal(root.get("active"), isActive);
+        };
+    }
 }
