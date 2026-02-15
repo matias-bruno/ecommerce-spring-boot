@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,6 +31,20 @@ public class GlobalExceptionHandler {
             401,
             "Unauthorized",
             "Usuario o contraseña incorrectos",
+            request.getRequestURI(),
+            Instant.now()
+        );
+    }
+    
+    
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleDataIntegrityViolation(DataIntegrityViolationException ex,
+            HttpServletRequest request) {
+        return new ErrorResponse(
+            400,
+            "Bad Request",
+            "La operación fue rechazada por la base de datos",
             request.getRequestURI(),
             Instant.now()
         );
