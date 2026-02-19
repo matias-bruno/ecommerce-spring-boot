@@ -4,6 +4,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,8 @@ public class JwtUtil {
     @Value("${application.security.jwt.expiration}")
     private Long EXPIRATION;
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(Authentication auth) {
+        UserDetails userDetails = (UserDetails)auth.getPrincipal();
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .claim("roles", userDetails.getAuthorities())

@@ -45,7 +45,7 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
     
-    // Atributo para borrado logico
+    // Atributo para borrado lógico
     private Boolean active = true;
     
     // Atributo para control de concurrencia

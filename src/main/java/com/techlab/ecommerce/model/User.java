@@ -1,8 +1,7 @@
 package com.techlab.ecommerce.model;
 
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDateTime;
 import lombok.Data;
 
 /**
@@ -18,7 +17,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 20)
     private String username;
     
     @Column(unique = true, nullable = false)
@@ -27,6 +26,15 @@ public class User {
     @Column(nullable = false)
     private String password;
     
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Role> roles = new HashSet<>();
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+    
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+    
+    private LocalDateTime updatedAt;
+    
+    @Column(nullable = false)
+    private Boolean active = true;
 }

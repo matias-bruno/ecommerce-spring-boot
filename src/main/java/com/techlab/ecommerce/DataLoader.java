@@ -8,18 +8,15 @@ import com.techlab.ecommerce.model.Role;
 import com.techlab.ecommerce.model.User;
 import com.techlab.ecommerce.repository.CategoryRepository;
 import com.techlab.ecommerce.repository.ProductRepository;
-import com.techlab.ecommerce.repository.RoleRepository;
 import com.techlab.ecommerce.repository.UserRepository;
 import com.techlab.ecommerce.service.ProductService;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.Resource;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,9 +29,7 @@ public class DataLoader implements CommandLineRunner {
     private final ProductRepository productRepository;
     private final ProductService productService;
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final CategoryRepository categoryRepository;
-    private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
 
     @Value("classpath:data/categories.json")
@@ -44,22 +39,17 @@ public class DataLoader implements CommandLineRunner {
     private Resource productsJson;
 
     public DataLoader(ProductRepository productoRepository, ProductService productService,
-            UserRepository userRepository, RoleRepository roleRepository,
-            CategoryRepository categoryRepository, PasswordEncoder passwordEncoder,
+            UserRepository userRepository, CategoryRepository categoryRepository,
             ObjectMapper objectMapper) {
         this.productRepository = productoRepository;
         this.productService = productService;
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.categoryRepository = categoryRepository;
         this.objectMapper = objectMapper;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) throws Exception {
-
-        loadRoles();
 
         loadUsers();
 
@@ -69,43 +59,29 @@ public class DataLoader implements CommandLineRunner {
 
     }
 
-    private void loadRoles() {
-        if (this.roleRepository.count() == 0) {
-            this.roleRepository.save(new Role("ADMIN"));
-            this.roleRepository.save(new Role("USER"));
-            System.out.println("ADMIN and USER roles created");
-        }
-    }
-
     private void loadUsers() {
         if (userRepository.findByUsername("admin").isEmpty()) {
             User admin = new User();
             admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("password-facil")); // Usa una contraseña segura en producción
+            // Insertamos el hash de una contraseña que sea fácil de recordar
+            // Usar contraseña segura en producción
+            admin.setPassword("$2a$10$L9EurcZCkfDWbRUwrIis4edIA40315X.HgK2nutBB5082.I.HlV3C");
             admin.setEmail("admin@ecommerce.com");
-            HashSet<Role> roles = new HashSet<>();
-            Optional<Role> optRole = this.roleRepository.findByName("ADMIN");
-            if (optRole.isPresent()) {
-                roles.add(optRole.get());
-                admin.setRoles(roles);
-                userRepository.save(admin);
-                System.out.println("ADMIN user created!");
-            }
+            admin.setRole(Role.ADMIN);
+            admin.setCreatedAt(LocalDateTime.now());
+            userRepository.save(admin);
+            System.out.println("¡Creado nuevo usuario admin!");
         }
 
         if (userRepository.findByUsername("newuser").isEmpty()) {
             User newuser = new User();
             newuser.setUsername("newuser");
-            newuser.setPassword(passwordEncoder.encode("otro-password")); // Usa una contraseña segura en producción
+            newuser.setPassword("$2a$10$aGJhADJZg0upIw9QHQ7OcegxDpnJu6aLnRbk3khxvdWcaqSAWCVym");
             newuser.setEmail("newuser@mail.com");
-            HashSet<Role> roles = new HashSet<>();
-            Optional<Role> optRole = this.roleRepository.findByName("USER");
-            if (optRole.isPresent()) {
-                roles.add(optRole.get());
-                newuser.setRoles(roles);
-                userRepository.save(newuser);
-                System.out.println("User created!");
-            }
+            newuser.setRole(Role.USER);
+            newuser.setCreatedAt(LocalDateTime.now());
+            userRepository.save(newuser);
+            System.out.println("¡Creado nuevo usuario!");
         }
     }
 
