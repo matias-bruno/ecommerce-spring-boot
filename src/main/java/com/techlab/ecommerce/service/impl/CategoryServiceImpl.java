@@ -60,12 +60,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse updateCategory(CategoryRequest categoryRequest, String slug) {
-        Category category = this.categoryRepository.findBySlug(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Categoria " + slug + " no encontrada."));
+    public CategoryResponse updateCategory(CategoryRequest categoryRequest, Long id) {
+        Category category = this.categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró la categoria con id " + id));
         
         String updatedName = TextUtils.toTitleCase(categoryRequest.getName());
         String updatedSlug = TextUtils.slugify(updatedName);
+        String slug = category.getSlug();
         
         if(!slug.equals(updatedSlug) && this.categoryRepository.findBySlug(updatedSlug).isPresent()) {
             throw new DuplicateResourceException("Categoria " + slug + " ya existe.");
@@ -80,9 +81,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(String slug) {
-        Category category = this.categoryRepository.findBySlug(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Categoria " + slug + " no encontrada."));
+    public void deleteCategory(Long id) {
+        Category category = this.categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró la categoria con id " + id));
         categoryRepository.delete(category);
     }
 
