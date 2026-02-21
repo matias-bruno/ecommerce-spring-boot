@@ -1,7 +1,10 @@
 package com.techlab.ecommerce.controller;
 
+import com.techlab.ecommerce.dto.CategoryResponse;
 import com.techlab.ecommerce.dto.ProductResponse;
+import com.techlab.ecommerce.service.CategoryService;
 import com.techlab.ecommerce.service.ProductService;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -16,9 +19,12 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
 
     private final ProductService productService;
+    private final CategoryService categoryService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService,
+            CategoryService categoryService) {
         this.productService = productService;
+        this.categoryService = categoryService;
     }
 
     // Le pasamos un PageableDefault con los valores que usaremos por defecto
@@ -36,5 +42,10 @@ public class ProductController {
     @GetMapping("/{id}")
     public ProductResponse getProductById(@PathVariable Long id) {
         return productService.findProductById(id);
+    }
+    
+    @GetMapping("/categories")
+    public List<CategoryResponse> findAllCategories() {
+        return categoryService.findAllCategories();
     }
 }

@@ -28,11 +28,6 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
     
-    @GetMapping("/api/categories")
-    public List<CategoryResponse> findAllCategories() {
-        return categoryService.findAllCategories();
-    }
-    
     @GetMapping("/api/categories/{slug}")
     public CategoryResponse findCategoryBySlug(@PathVariable String slug) {
         return categoryService.findCategoryBySlug(slug);
