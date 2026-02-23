@@ -1,6 +1,7 @@
 package com.techlab.ecommerce.security;
 
 import com.techlab.ecommerce.model.User;
+import com.techlab.ecommerce.model.UserStatus;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,7 +41,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return user.getStatus() != UserStatus.SUSPENDED;
     }
 
     @Override
@@ -50,6 +51,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.getStatus() != UserStatus.DELETED;
     }
 }

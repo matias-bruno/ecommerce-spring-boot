@@ -35,6 +35,7 @@ public class User {
     
     private LocalDateTime updatedAt;
     
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Boolean active = true;
+    private UserStatus status = UserStatus.ACTIVE;
 }
